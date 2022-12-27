@@ -1,23 +1,49 @@
 ---
+
 all:
  vars:
 
   # GKE cluster variables
-  gcp_project: <project_name>              # ID of GCP Project
-  gcp_auth_kind: serviceaccount            # Do not change
-  gcp_cred_file: <path_service_account>    # Path to service account keys (json file downloaded from GCP)
+  gcp_project: projeto-ascn            # ID of GCP Project
+  gcp_auth_kind: serviceaccount        # Do not change
+  
+  # Path to service account keys (json file downloaded from GCP)
+  gcloud_sa_path: "projeto-ascn-2677cc5eb534.json"
+  gcp_cred_file: "./gcp-credentials/{{ gcloud_sa_path }}"
+  gcp_service_account: 971877283612-compute@developer.gserviceaccount.com
 
-  gcp_zone: us-central1-a
+  # GCP related information
+  gcp_zone: europe-west2-a
+  gcp_region: europe-west2
   gcp_image_type: ubuntu_containerd
-  gcp_machine_type: e2-small          # Can be changed if necessary
+  gcp_cluster_name: gke-cluster
+  gcp_machine_type: e2-small           # Can be changed if necessary
   gcp_disk_size_gb: 100                # Can be changed if necessary
   gcp_initial_node_count: 2            # Number of nodes to create. Can be changed if necessary
-
 
   # APP variables
   ghost_ip: <GHOST_SERVICE_IP>     # Needs to be updated
   ghost_port: <GHOST_PORT>         # Needs to be updated
 
-
   # Additional variables
-  # ...
+  app: ghost
+  image: hub.docker.com/_/ghost
+
+  #Database
+  master_db_name: ghost-db-533478
+  replica_name: ghost-replica
+
+  DB_TYPE: "mysql"
+  DB_HOST: "cloudsqlproxy~%"
+  DB_PORT: "3306"
+  DB_USER: "proxy"
+  DB_PASS: ""
+  DB_NAME: "ghost_db"
+
+  #Ghost DB
+  ghost_db_user: "{{ DB_USER }}"
+  ghost_db_name: ascn
+  ghost_db_password: ascn123
+  ghost_letsencrypt_user: ascn@example.com
+  ghost_cli_version: 5.14.1
+  namespace: ghost
