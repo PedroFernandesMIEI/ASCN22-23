@@ -1,7 +1,9 @@
 ---
 
+# Destroy Cluster
+
 - name: Destroy Google Kubernetes Engine Cluster
-  gcp_container_cluster:
+  google.cloud.gcp_container_cluster:
     name: ascn-cluster
     location: "{{ gcp_zone }}"
     project: "{{ gcp_project }}"
@@ -9,11 +11,13 @@
     service_account_file: "{{ gcp_cred_file }}"
     state: absent
   register: cluster
-  until: "cluster is not failed"
-  delay: 60
-  retries: 3
+  #until: "Cluster is not failed"
+  #delay: 60
+  #retries: 3
 
-- name: Verify that the cluster was deleted
+# Verifications
+
+- name: Verify that the Cluster was deleted
   gcp_container_cluster_info:
     location: "{{ gcp_zone }}"
     project: "{{ gcp_project }}"
@@ -26,5 +30,4 @@
 - name: Verify that the command succeeded
   assert:
     that:
-    - '''ascn-cluster'' not in "{{ results[''resources''] | map(attribute=''name'')
-      | list }}"'
+    - '''ascn-cluster'' not in "{{ results[''resources''] | map(attribute=''name'') | list }}"'

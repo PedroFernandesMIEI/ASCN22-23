@@ -1,0 +1,51 @@
+---
+
+- name: Create a Instance
+  google.cloud.gcp_sql_instance:
+    name: "{{ master_db_name }}"
+    settings:
+      ip_configuration:
+        authorized_networks:
+        - name: google dns server
+          value: 8.8.8.8/32
+      tier: db-n1-standard-2
+      backup_configuration:
+        binary_log_enabled: yes
+        enabled: yes
+      availability_type: "REGIONAL"
+    backend_type: "SECOND_GEN"
+    database_version: "MYSQL_5_7"
+    max_disk_size: "{{ max_disk_storage }}"
+    region: "{{ master_db_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: instance
+  tags:
+    - create_master_instance
+
+- name: Create a Database
+  google.cloud.gcp_sql_database:
+    name: "{{ DB_NAME }}"
+    charset: utf8
+    instance: "{{ master_db_name }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  tags:
+    - create_database
+
+- name: Create a User
+  google.cloud.gcp_sql_user:
+    name: "{{ DB_USER }}"
+    host: "{{ DB_HOST }}"
+    password: "{{ DB_PASS }}"
+    instance: "{{ instance }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  tags:
+    - create_user

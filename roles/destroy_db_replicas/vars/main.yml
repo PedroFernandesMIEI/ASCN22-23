@@ -1,0 +1,5 @@
+---
+
+replicas:
+ - "{{replica_name}}-1"
+ - "{{replica_name}}-2"

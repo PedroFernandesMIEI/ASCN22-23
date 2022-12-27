@@ -1,0 +1,4 @@
+---
+
+app: ghost
+image: docker pull ghost

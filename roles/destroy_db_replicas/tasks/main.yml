@@ -1,0 +1,10 @@
+---
+
+- name: Destroy Master Instance
+  google.cloud.gcp_sql_instance:
+    name: "{{ item }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+  loop: "{{ replicas }}"

@@ -1,0 +1,8 @@
+---
+
+replicas:
+    - '{{ replica_name }}-1'
+    - '{{ replica_name }}-2'
+machine_tier: db-n1-standard-2
+max_disk_storage: 5368709120
+replicas_db_region: "{{ gcp_region }}"

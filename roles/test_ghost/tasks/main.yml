@@ -1,6 +1,6 @@
 ---
 
-- name: Refresh inventory
+- name: Refresh Inventory
   meta: refresh_inventory
 
 - name: Check that you can connect (GET) to Ghost and it returns a status 200

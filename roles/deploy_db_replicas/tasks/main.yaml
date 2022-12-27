@@ -1,0 +1,25 @@
+---
+
+- name: Deploy a Replica
+  google.cloud.gcp_sql_instance:
+    name: "{{ item }}"
+    instance_type: "READ_REPLICA_INSTANCE"
+    master_instance_name: "{{ master_db_name }}"
+    settings:
+      ip_configuration:
+        authorized_networks:
+        - name: google dns server
+          value: 8.8.8.8/32
+      tier: "{{ machine_tier }}"
+    backend_type: "SECOND_GEN"
+    database_version: "MYSQL_5_7"
+    max_disk_size: "{{ max_disk_storage }}"
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: instance
+  loop: "{{ replicas }}"
+  tags:
+    - create_read_replicas

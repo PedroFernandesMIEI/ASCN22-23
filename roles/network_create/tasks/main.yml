@@ -1,0 +1,9 @@
+- name: Create GCP network
+  google.cloud.gcp_compute_network:
+    name: network-{{ gcp_cluster_name }}
+    auto_create_subnetworks: 'true'
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: network

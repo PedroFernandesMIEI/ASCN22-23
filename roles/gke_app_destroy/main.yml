@@ -1,0 +1,7 @@
+---
+
+- name: Destroy Ghost App
+  kubernetes.core.k8s:
+    name: "{{ namespace }}"
+    kind: namespace
+    state: absent

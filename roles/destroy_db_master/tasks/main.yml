@@ -1,0 +1,20 @@
+---
+
+- name: Destroy db_master
+  tags: destroy_db
+  google.cloud.gcp_sql_database:
+    instance: "{{ master_db_name }}"
+    name: "ghost_db"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+
+- name: Destroy Master Instance
+  tags: destroy_master_instance
+  google.cloud.gcp_sql_instance:
+    name: "{{ master_db_name }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_auth_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
