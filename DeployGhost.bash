@@ -1,1 +1,1 @@
-ansible-playbook CodeBase/deploy-ghost.yml -i CodeBase/inventory/gcp.yml
+ansible-playbook deploy-ghost.yml -i inventory/gcp.yml

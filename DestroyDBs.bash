@@ -1,1 +1,1 @@
-ansible-playbook CodeBase/destroy-db.yml -i CodeBase/inventory/gcp.yml
+ansible-playbook destroy-db.yml -i inventory/gcp.yml

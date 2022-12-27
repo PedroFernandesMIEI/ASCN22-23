@@ -1,1 +1,1 @@
-ansible-playbook CodeBase/create-gke-cluster.yml -i CodeBase/inventory/gcp.yml
+ansible-playbook create-gke-cluster.yml -i inventory/gcp.yml

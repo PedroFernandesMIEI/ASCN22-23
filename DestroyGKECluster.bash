@@ -1,1 +1,1 @@
-ansible-playbook CodeBase/destroy-gke-cluster.yml -i CodeBase/inventory/gcp.yml
+ansible-playbook destroy-gke-cluster.yml -i inventory/gcp.yml
