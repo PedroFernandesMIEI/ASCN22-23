@@ -1,3 +1,13 @@
 ---
 # Playbook to deploy Ghost and its components
-# TO DO
+
+- name: Deploy Ghost app
+  hosts: localhost
+  gather_facts: false
+  environment:
+    GOOGLE_CREDENTIALS: "{{ gcp_cred_file }}"
+
+  roles:
+    - {role: gke_app_deploy, tags: 'gke_app_deploy'}
+  tags:
+    - gke_app_deploy

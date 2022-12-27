@@ -1,8 +1,12 @@
 ---
-# Playbook to create GKE cluster
+# Playbook to Create GKE Cluster
 
-- name: Create a GKE cluster
+- name: Create a GKE Cluster
   hosts: localhost
   gather_facts: false
+  environment:
+    GOOGLE_CREDENTIALS: "{{ gcp_cred_file }}"
+
   roles:
-      - gke_cluster_create
+    - network_create
+    - gke_cluster_create

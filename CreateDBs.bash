@@ -1,0 +1,1 @@
+ansible-playbook CodeBase/deploy-db.yml -i CodeBase/inventory/gcp.yml

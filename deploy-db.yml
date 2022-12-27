@@ -1,0 +1,14 @@
+---
+# Playbook to Deploy Database
+
+- name: Create a SQL Database and Replicas
+  hosts: localhost
+  gather_facts: false
+  environment:
+    GOOGLE_CREDENTIALS: "{{ gcp_cred_file }}"
+
+  roles:
+    - {role: deploy_db_master, tags: 'deploy_db_master'}
+    - {role: deploy_db_replicas, tags: 'deploy_db_replicas'}
+  tags:
+    - deploy_app

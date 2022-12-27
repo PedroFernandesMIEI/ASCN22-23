@@ -1,0 +1,14 @@
+---
+# Playbook to Destroy Database
+
+- name: Destroy a SQL Database and Replicas
+  hosts: localhost
+  gather_facts: false
+  environment:
+    GOOGLE_CREDENTIALS: "{{ gcp_cred_file }}"
+
+  roles:
+    - {role: destroy_db_replicas, tags: 'destroy_db_replicas'}
+    - {role: destroy_db_master, tags: 'destroy_db_master'}
+  tags:
+    - destroy_deployment

@@ -1,8 +1,12 @@
 ---
-# Playbook to destroy GKE cluster
+# Playbook to Destroy GKE Cluster
 
-- name: Destroy GKE cluster
+- name: Destroy GKE Cluster
   hosts: localhost
   gather_facts: false
+  environment:
+    GOOGLE_CREDENTIALS: "{{ gcp_cred_file }}"
+
   roles:
-  - gke_cluster_destroy
+   - gke_cluster_destroy
+   - network_destroy

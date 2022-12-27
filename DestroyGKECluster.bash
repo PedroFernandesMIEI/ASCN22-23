@@ -1,0 +1,1 @@
+ansible-playbook CodeBase/destroy-gke-cluster.yml -i CodeBase/inventory/gcp.yml
