@@ -1,1 +1,1 @@
-ansible-playbook deploy-ghost.yml -i inventory/gcp.yml
+ansible-playbook --become deploy-ghost.yml -i inventory/gcp.yml
