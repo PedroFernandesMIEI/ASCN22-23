@@ -1,82 +1,31 @@
 ---
-- name: Pull Ghost Image
-  docker_image:
-    name: "{{ image }}"
-    source: pull
 
-- name: Create Kubectl Config
-  command: gcloud container clusters get-credentials gke-ghost --zone "{{ gcp_zone }}" --project "{{ gcp_project }}"
-
-#- name: Install kubectl
-#  command: gcloud components install kubectl
-
-- name: Create a GKE-Cluster Namespace
-  kubernetes.core.k8s:
+- name: Install Kubernetes package
+  package:
+    name: kubelet
     state: present
-    definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: "{{ namespace }}"
 
-- name: Change Context
-  command: kubectl config set-context --current --namespace=ghost
+- name: Start and enable the Kubernetes service
+  service:
+    name: kubelet
+    state: started
+    enabled: yes
 
-- name: Create Secret
-  command: kubectl create secret generic cloudsql-db-1 --from-file=service_account.json=./service-account.json
+- name: Create a deployment for Ghost
+  host: localhost
+  template:
+    src: ghost-deployment.yaml
+    dest: /etc/kubernetes/manifests/ghost-deployment.yaml
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
 
-- name: Create GKE Clusters Pod for Ghost
-  tags: deploy_pods
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: Deployment
-      metadata:
-        name: "{{ app }}"
-        namespace: "{{ namespace }}"
-      spec:
-        selector:
-          matchLabels:
-            run: balancer
-        replicas: 1
-        template:
-          metadata:
-            labels:
-              run: balancer
-          spec:
-            containers:
-              - name: "{{ app }}"
-                image: "{{ image }}"
-                imagePullPolicy: Always
-                env:
-                  - name: DB_TYPE
-                    value: "{{ DB_TYPE }}"
-                  - name: DB_HOST
-                    value: "localhost"
-                  - name: DB_PORT
-                    value: "{{ DB_PORT }}"
-                  - name: DB_USER
-                    value: "{{ DB_USER }}"
-                  - name: DB_PASS
-                    value: "{{ DB_PASS }}"
-                  - name: DB_NAME
-                    value: "{{ DB_NAME }}"
-              - name: cloud-sql-proxy
-                image: gcr.io/cloudsql-docker/gce-proxy:latest
-                command: ["/cloud_sql_proxy", "-instances={{ project_id }}:{{ region }}:{{ master_db_name }}=tcp:{{ DB_PORT }}", "-gcp_cred_file=/secrets/service_account.json"]
-                securityContext:
-                    runAsNonRoot: true
-                volumeMounts:
-                    - name: cloudsql-db-1
-                      mountPath: /secrets/
-                      readOnly: true
-            volumes:
-            - name: cloudsql-db-1
-              secret:
-                defaultMode: 511
-                secretName: cloudsql-db-1
-
-- name: Expose Service
-  tags: expose_service
-  command: kubectl expose deployment ghost --type=LoadBalancer --name=servico --port 80 --target-port 3000
+- name: Create a service for Ghost
+  template:
+    src: ghost-service.yaml
+    dest: /etc/kubernetes/manifests/ghost-service.yaml
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
