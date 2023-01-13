@@ -1,7 +1,7 @@
 ---
 # Playbook to test the full deployment of Ghost (from creation to destruction)
 
-- import_playbook: deploy-ghost.yml
+- import_playbook: deploy-ghost.yaml
 
 - name: Tests
   hosts: localhost
@@ -11,7 +11,7 @@
 
 - import_playbook: undeploy-ghost.yml
 
-- import_playbook: deploy-ghost.yml
+- import_playbook: deploy-ghost.yaml
 
 - name: Tests
   hosts: localhost

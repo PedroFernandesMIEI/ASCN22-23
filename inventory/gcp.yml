@@ -8,22 +8,18 @@ all:
   gcp_auth_kind: serviceaccount        # Do not change
   
   # Path to service account keys (json file downloaded from GCP)
-  gcloud_sa_path: "projeto-ascn-2677cc5eb534.json"
+  gcloud_sa_path: "projeto-ascn-72d7b1f18300.json"
   gcp_cred_file: "./gcp-credentials/{{ gcloud_sa_path }}"
-  gcp_service_account: 971877283612-compute@developer.gserviceaccount.com
+  gcp_service_account: sa-example@projeto-ascn.iam.gserviceaccount.com
 
   # GCP related information
   gcp_zone: europe-west2-a
   gcp_region: europe-west2
   gcp_image_type: ubuntu_containerd
   gcp_cluster_name: gke-cluster
-  gcp_machine_type: e2-small           # Can be changed if necessary
+  gcp_machine_type: e2-medium           # Can be changed if necessary
   gcp_disk_size_gb: 100                # Can be changed if necessary
   gcp_initial_node_count: 2            # Number of nodes to create. Can be changed if necessary
-
-  # APP variables
-  ghost_ip: <GHOST_SERVICE_IP>     # Needs to be updated
-  ghost_port: <GHOST_PORT>         # Needs to be updated
 
   # Additional variables
   app: ghost
@@ -47,3 +43,9 @@ all:
   ghost_letsencrypt_user: ascn@example.com
   ghost_cli_version: 5.14.1
   namespace: ghost
+
+  registry_name: ghost_docker
+
+  ghost_ip: 34.71.88.140
+  ghost_port: 80        # Needs to be updated
+  

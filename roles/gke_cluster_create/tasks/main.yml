@@ -38,16 +38,16 @@
     service_account_file: "{{ gcp_cred_file }}"
     state: present
 
-# Verifications
+ #Verifications
 
-#- name: Verify that the Cluster was created
-#  shell: gcloud container clusters describe  --project="{{ gcp_project}}"  --zone="{{ gcp_zone }}"  ascn-cluster
-#  register: results
-#
-#- name: Verify that the Command succeeded
-#  assert:
-#    that:
-#      - results.rc == 0
-#
-#- name: Connect to the Cluster (update kubeconfig)"
-#  shell: gcloud container clusters get-credentials  --project="{{ gcp_project}}"  --zone="{{ gcp_zone }}"  ascn-cluster
+- name: Verify that the Cluster was created
+  shell: gcloud container clusters describe  --project="{{ gcp_project}}"  --zone="{{ gcp_zone }}"  ascn-cluster 
+  register: results
+
+- name: Verify that the Command succeeded
+  assert:
+    that:
+      - results.rc == 0
+
+- name: Connect to the Cluster (update kubeconfig)"
+  shell: gcloud container clusters get-credentials  --project="{{ gcp_project}}"  --zone="{{ gcp_zone }}"  ascn-cluster

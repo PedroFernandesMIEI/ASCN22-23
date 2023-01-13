@@ -1,0 +1,97 @@
+- name: Pull Ghost image
+  docker_container:
+    name: ghost
+    image: ghost:latest
+    pull: true
+
+- name: Expose Ghost Service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: ghost-service
+        namespace: default
+        labels:
+          app: ghost
+          tier: app
+      spec:
+        type: LoadBalancer 
+        selector:
+          app: ghost
+        ports:
+          # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+          - targetPort: 2368 # port that containers are listening on
+            port: 80 # port exposed internally in the cluster
+            # Optional field
+            # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+            #nodePort: 30007 # a static port assigned on each the node
+
+- name: Use K8s_info to get the current service
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Service
+    name: ghost-service
+    namespace: default
+  register: ghost_service
+  until: "ghost_service.resources[0].status.loadBalancer.ingress is defined"
+  retries: 10 
+  delay: 5
+
+- name: Create k8s deployment for ghost
+  tags: deploy_pods
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Deployment
+      metadata:
+        name: "{{ app }}"
+        namespace: default
+      spec:
+        selector:
+          matchLabels:
+            run: balancer
+        replicas: 1
+        template:
+          metadata:
+            labels:
+              run: balancer
+          spec:
+            containers:
+              - name: "{{ app }}"
+                image: "{{ image }}"
+                imagePullPolicy: Always
+                env:
+                  - name: DB_TYPE
+                    value: "{{ DB_TYPE }}"
+                  - name: DB_HOST
+                    value: "localhost"
+                  - name: DB_PORT
+                    value: "{{ DB_PORT }}"
+                  - name: DB_USER
+                    value: "{{ DB_USER }}"
+                  - name: DB_PASS
+                    value: "{{ DB_PASS }}"
+                  - name: DB_NAME
+                    value: "{{ DB_NAME }}"
+              - name: cloud-sql-proxy
+                image: gcr.io/cloudsql-docker/gce-proxy:latest
+                command: ["/cloud_sql_proxy", "-instances={{ project_id }}:{{ region }}:{{ master_db_name }}=tcp:{{ DB_PORT }}", "-credential_file=/secrets/service_account.json"]
+                securityContext:
+                    runAsNonRoot: true
+                volumeMounts:
+                    - name: cloudsql-db-1
+                      mountPath: /secrets/
+                      readOnly: true
+            volumes:
+            - name: cloudsql-db-1
+              secret:
+                defaultMode: 511
+                secretName: cloudsql-db-1
+
+
+- name: Expose service
+  tags: expose_service
+  command: kubectl expose deployment ghost --type=LoadBalancer --name=servico --port 80 --target-port 3000 
